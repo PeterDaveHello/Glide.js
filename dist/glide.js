@@ -602,22 +602,28 @@ var Bullets = function(Glide, Core) {
 
 
 	/**
+	 * Bullet click
+	 * @param  {Object} event
+	 */
+	Module.prototype.click = function(event) {
+		event.preventDefault();
+
+		if (!Core.Events.disabled) {
+			Core.Run.pause();
+			Core.Run.make($(this).data('glide-dir'));
+			Core.Animation.after(function() {
+				Core.Run.play();
+			});
+		}
+	};
+
+
+	/**
 	 * Bind
 	 * bullets events
 	 */
 	Module.prototype.bind = function() {
-
-		this.wrapper.on('click.glide touchstart.glide', 'li', function(event){
-			event.preventDefault();
-			if (!Core.Events.disabled) {
-				Core.Run.pause();
-				Core.Run.make($(this).data('glide-dir'));
-				Core.Animation.after(function() {
-					Core.Run.play();
-				});
-			}
-		});
-
+		return this.wrapper.on('click.glide touchstart.glide', 'li', this.click);
 	};
 
 
@@ -1665,10 +1671,13 @@ var Glide = function (element, options) {
  * and set classes
  */
 Glide.prototype.collect = function() {
-	this.slider = this.element.addClass(this.options.classes.base + '--' + this.options.type).addClass(this.options.classes.base + '--' + this.options.mode);
-	this.track = this.slider.find('.' + this.options.classes.track);
-	this.wrapper = this.slider.find('.' + this.options.classes.wrapper);
-	this.slides = this.track.find('.' + this.options.classes.slide).not('.' + this.options.classes.clone);
+	var options = this.options;
+	var classes = options.classes;
+
+	this.slider = this.element.addClass(classes.base + '--' + options.type).addClass(classes.base + '--' + options.mode);
+	this.track = this.slider.find('.' + classes.track);
+	this.wrapper = this.slider.find('.' + classes.wrapper);
+	this.slides = this.track.find('.' + classes.slide).not('.' + classes.clone);
 };
 
 
